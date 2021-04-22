@@ -1,26 +1,92 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { Quizdata, Quiz } from './Quizdata';
+import firebase from './firebase';
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const messages = firebase.messaging();
+    messages.requestPermission().then(() => {
+
+        return messages.getToken();
+    }).then((token) => {
+        console.log(token);
+    })
+    const [answer, setAnswer] = useState < string>('');
+    const [quiz, setQuiz] = useState<Quiz[]>([]);
+    const [count, setCount] = useState<number>(0);
+    const [score, setScore] = useState<number>(0);
+    useEffect(() => {
+        async function allData() {
+            const data: Quiz[] = await Quizdata();
+            console.log(data);
+            return setQuiz(data);
+        }
+        allData();
+
+    }, []);
+    const handleClick = (e: React.FormEvent<EventTarget>, value: string) => {
+        e.preventDefault();
+        // console.log(value);
+        if (value === quiz[count].correct_answer) {
+            setScore(() => score + 1);
+        }
+        setCount(() => count + 1);
+    }
+    if (quiz.length === 0) {
+       
+            return (
+                <>
+                    <h1>Loading...</h1>
+                </>
+            );
+       
+    }
+    if (count >= quiz.length) {
+        return (
+            <h2>Your Score is: {score}</h2>
+        );
+    }       
+    else {
+        //console.log(quiz[count].incorrect_answers[2]);
+
+        return (
+            <>
+            <div className="App" style={{margin:'0 auto'}}>
+                    <h1>QUIZ TEST</h1>
+                    <Card border="secondary" style={{ width: '40rem', margin:'0 auto' }} id='card'>
+                   
+                    <Card.Body>
+                        <Card.Title> <h1>{quiz[count].question}</h1></Card.Title>
+                        <Card.Text>
+                            <form onSubmit={(e) => handleClick(e, answer)} id='form'>
+                                {
+                                    quiz[count].incorrect_answers.map((option, ind) => {
+                                        // console.log(option);
+                                        return (
+                                            <div key={ind}>
+
+                                                <input type='radio' name='option' value={option} onChange={() => setAnswer(option)} required checked={answer === option} />{option}
+                                            </div>
+                                        );
+                                    })
+                                    }
+                                    <Button variant="primary" size="sm" block type='submit' value='Next'>
+                                        NEXT
+                                     </Button>
+                               
+                            </form>
+                         </Card.Text>
+                     </Card.Body>
+                </Card>
+                <br />    
+                </div>
+                </>
+        );
+    }
 }
 
 export default App;
