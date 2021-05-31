@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { Quizdata, Quiz } from './Quizdata';
 import firebase from './firebase';
@@ -47,7 +46,21 @@ function App() {
     }
     if (count >= quiz.length) {
         return (
-            <h2>Your Score is: {score}</h2>
+            <div style={{ paddingTop: '5em' }}>
+                <Card
+     
+                    text='white'
+                    style={{ width: '18rem', margin: '0 auto', height: '15rem', backgroundColor: "green" }}
+                    className="mb-2 card"
+                >
+                    <Card.Title style={{ margin:"0 auto" }}>Result </Card.Title>
+                    <Card.Body style={{ marginTop: '4em' }}>
+                        <Card.Title>OBTAINED MARKS : {score} </Card.Title>
+                        <Card.Title>TOTAL MARKS : {quiz.length} </Card.Title>
+                    </Card.Body>
+                </Card>
+            </div>
+        
         );
     }       
     else {
@@ -56,8 +69,8 @@ function App() {
         return (
             <>
             <div className="App" style={{margin:'0 auto'}}>
-                    <h1>QUIZ TEST</h1>
-                    <Card border="secondary" style={{ width: '40rem', margin:'0 auto' }} id='card'>
+                    <h1 >QUIZ TEST</h1>
+                    <Card border="secondary" style={{ width: '40rem', margin:'0 auto' }} className='card'>
                    
                     <Card.Body>
                         <Card.Title> <h1>{quiz[count].question}</h1></Card.Title>
